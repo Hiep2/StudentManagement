@@ -1,0 +1,52 @@
+﻿@model Student
+
+@{
+    var isEdit = Model.StudentId != 0;
+    var save = "Save";
+}
+
+<h2>Add Student</h2>
+
+@using (Html.BeginForm("Save", "Student", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    @if (isEdit)
+    {
+        @Html.HiddenFor(model => model.StudentId)
+    }
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Name)
+        @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Name)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Sex)
+        @Html.TextBoxFor(model => model.Sex, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Sex)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.BirthDate)
+        @Html.TextBoxFor(model => model.BirthDate, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.BirthDate)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ClassName)
+        @Html.TextBoxFor(model => model.ClassName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.ClassName)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.StudyYear)
+        @Html.TextBoxFor(model => model.StudyYear, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.StudyYear)
+    </div>
+
+    <!-- Wiederholen Sie das obige für alle notwendigen Felder wie Geschlecht, Geburtsdatum usw. -->
+
+    <button type="submit" class="btn btn-primary">@save</button>
+}

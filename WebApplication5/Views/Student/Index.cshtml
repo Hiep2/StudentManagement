@@ -1,0 +1,105 @@
+﻿<style>
+    body {
+        font-family: 'Arial', sans-serif;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    tr:hover {
+        background-color: #e8e8e8;
+    }
+
+    .btn-fixed-width {
+        width: 80px;
+    }
+
+    .btn-margin-vertical {
+        margin-bottom: 2px;
+    }
+
+    .sticky-top {
+        position: sticky;
+        top: 0;
+        z-index: 1020;
+        background-color: white;
+        border-bottom: 1px solid #e3e3e3;
+        padding-bottom: 10px;
+}
+
+.content {
+  margin-top: 60px; 
+}
+
+</style>
+
+<div class="sticky-top">
+    <h2>Studentlist</h2>
+    @using (Html.BeginForm("Index", "Student", FormMethod.Get))
+    {
+        <p>
+            Name: @Html.TextBox("searchString")
+            <input type="submit" value="Search" />
+        </p>
+    }
+
+    <form method="post" enctype="multipart/form-data" asp-action="ImportCSV">
+        <input type="file" name="file" />
+        <input type="submit" value="Upload" />
+    </form>
+
+    <a href="@Url.Action("Create", "Student")" class="btn btn-success btn-margin-vertical">Add Studenten</a>
+</div>
+<div class="content">
+    <table>
+        <thead>
+            <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Sex</th>
+                <th>Birth Date</th>
+                <th>Class Name</th>
+                <th>Study Year</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in Model.Students)
+            {
+                if (student != null)
+                {
+                    <tr>
+                        <td>@student.StudentId</td>
+                        <td>@student.Name</td>
+                        <td>@student.Sex</td>
+                        <td>@student.BirthDate</td>
+                        <td>@student.ClassName</td>
+                        <td>@student.StudyYear</td>
+                        <td>
+                            <a href="@Url.Action("Edit", "Student", new { id = student.StudentId })" class="btn btn-info btn-fixed-width btn-margin-vertical">Edit</a>
+                            <a href="@Url.Action("Details", "Student", new { id = student.StudentId })" class="btn btn-info btn-fixed-width btn-margin-vertical">Details</a>
+                            <a href="@Url.Action("Delete", "Student", new { id = student.StudentId })" class="btn btn-danger btn-fixed-width btn-margin-vertical">Delete</a>
+                        </td>
+                    </tr>
+
+                }
+            }
+        </tbody>
+    </table>
+
+</div>
+
+
+
+

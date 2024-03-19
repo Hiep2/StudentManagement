@@ -1,0 +1,80 @@
+﻿@model StudentDetailsViewModel
+
+<h2>Studentdetails</h2>
+
+<div>
+    <h4>Student</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Name:
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Student.Name
+        </dd>
+        <dt class="col-sm-2">
+            Geschlecht:
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Student.Sex
+        </dd>
+        <dt class="col-sm-2">
+            Geburtsdatum:
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Student.BirthDate.ToString("dd.MM.yyyy")
+        </dd>
+        <dt class="col-sm-2">
+            Klasse:
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Student.ClassName
+        </dd>
+        <dt class="col-sm-2">
+            Studienjahr:
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Student.StudyYear
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <h4>Course</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Course Name</th>
+                <th>Units</th>
+                <th>Prozess Grade</th>
+                <th>Component Grade</th>
+                <th>Final Grade</th>
+                <th>Is Course Passed?</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var course in Model.Courses)
+            {
+                <tr>
+                    <td>@course.CourseName</td>
+                    <td>@course.CourseUnit</td>
+                    <td>@course.ProzessGrade</td>
+                    <td>@course.ComponentGrade</td>
+                    <td>@course.finalGrade</td>
+                    <td>@course.isPassed</td>
+                    <td>
+                        <a href="@Url.Action("Edit", "Course", new { studentId = Model.Student.StudentId, courseId = course.CourseId })" class="btn btn-info">Edit</a>
+                        @using (Html.BeginForm("Delete", "Course", new { studentId = Model.Student.StudentId, courseId = course.CourseId }, FormMethod.Post))
+                        {
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <a href="@Url.Action("Create", "Course", new { studentId = Model.Student.StudentId})" class="btn btn-primary">Add New Course Detail</a>
+    <a href="@Url.Action("Add", "Course", new { studentId = Model.Student.StudentId})" class="btn btn-primary">Add New Course</a>
+</div>
+
+<a href="@Url.Action("Index", "Student")">Return</a>
