@@ -10,13 +10,13 @@ namespace WebApplication5.Services
         Task<Student> UpdateStudentAsync(Student student);
         Task DeleteStudentAsync(int studentId);
         Task<IEnumerable<Student>> SearchStudentsAsync(string searchString);
-        Task<List<CourseDetail>> GetCourseDetailsByStudentIdAsync(int studentId);
+        Task<List<CourseEnrollment>> GetCourseEnrollmentByStudentIdAsync(int studentId);
         Task<List<Course>> GetAllCoursesAsync();
         Task<List<Enrollment>> GetAllEnrollmentsAsync();
-        Task UpdateCourseEnrollmentAsync(CourseDetail courseDetail);
+        Task UpdateCourseEnrollmentAsync(CourseEnrollment courseEnrollment);
         Task DeleteCourseEnrollmentAsync(int courseId, int studentId);
-        Task<CourseDetail> GetCourseDetailByStudentAsync(int studentId, int courseId);
-        Task AddCourseDetailAsync(int studentId, CourseDetail courseDetail);
-        Task AssignCourseToStudentAsync(CourseDetail courseDetail);
+        Task<CourseEnrollment> GetCourseEnrollmentByStudentAsync(int studentId, int courseId);
+        Task AddCourseEnrollmentAsync(int studentId, CourseEnrollment courseEnrollment);
+        Task AssignCourseEnrollmentToStudentAsync(CourseEnrollment courseEnrollment);
     }
 }

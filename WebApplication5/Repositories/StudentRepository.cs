@@ -1,9 +1,5 @@
-﻿using Dapper;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MySqlConnector;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Data;
-using System.Data.Common;
 using WebApplication5.Models;
 
 namespace WebApplication5.Repositories
@@ -24,7 +20,12 @@ namespace WebApplication5.Repositories
 
         public async Task<Student> GetStudentByIdAsync(int studentId)
         {
-            return await _context.Students.FindAsync(studentId);
+            var student = await _context.Students.FindAsync(studentId);
+            if (student == null)
+            {
+                throw new KeyNotFoundException($"Student with that ID {studentId} was not found.");
+            }
+            return student;
         }
 
         public async Task<Student> AddStudentAsync(Student student)
@@ -51,7 +52,7 @@ namespace WebApplication5.Repositories
             }
         }
 
-        public async Task<IEnumerable<Student>>SearchStudentsAsync (string searchString)
+        public async Task<IEnumerable<Student>> SearchStudentsAsync(string searchString)
         {
             var query = _context.Students.AsQueryable();
             if (!string.IsNullOrEmpty(searchString))
@@ -62,18 +63,11 @@ namespace WebApplication5.Repositories
             return await query.ToListAsync();
         }
 
-        public async Task<List<CourseDetail>> GetCourseDetailsByStudentIdAsync(int studentId)
+        public async Task<List<CourseEnrollment>> GetCourseEnrollmentByStudentIdAsync(int studentId)
         {
             var courseDetails = await _context.Enrollments
                 .Where(e => e.StudentId == studentId)
-                .Select(e => new CourseDetail
-                {
-                    CourseId = e.Course.CourseId,
-                CourseName = e.Course.CourseName,
-                CourseUnit = e.Course.CourseUnit,
-                ProzessGrade = e.ProzessGrade,
-                ComponentGrade = e.ComponentGrade,
-                })
+                .Select(e => new CourseEnrollment(e.Course.CourseId, e.Course.CourseName, e.Course.CourseUnit, e.ProzessGrade, e.ComponentGrade, 0))
                 .ToListAsync();
 
             return courseDetails;

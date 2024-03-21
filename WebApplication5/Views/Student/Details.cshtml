@@ -53,18 +53,18 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var course in Model.Courses)
+            @foreach (var courseEnrollment in Model._CourseEnrollments)
             {
                 <tr>
-                    <td>@course.CourseName</td>
-                    <td>@course.CourseUnit</td>
-                    <td>@course.ProzessGrade</td>
-                    <td>@course.ComponentGrade</td>
-                    <td>@course.finalGrade</td>
-                    <td>@course.isPassed</td>
+                    <td>@courseEnrollment.CourseName</td>
+                    <td>@courseEnrollment.CourseUnit</td>
+                    <td>@courseEnrollment.ProzessGrade</td>
+                    <td>@courseEnrollment.ComponentGrade</td>
+                    <td>@courseEnrollment.finalGrade</td>
+                    <td>@courseEnrollment.isPassed</td>
                     <td>
-                        <a href="@Url.Action("Edit", "Course", new { studentId = Model.Student.StudentId, courseId = course.CourseId })" class="btn btn-info">Edit</a>
-                        @using (Html.BeginForm("Delete", "Course", new { studentId = Model.Student.StudentId, courseId = course.CourseId }, FormMethod.Post))
+                        <a href="@Url.Action("Edit", "Course", new { studentId = Model.Student.StudentId, courseId = courseEnrollment.CourseId })" class="btn btn-info">Edit</a>
+                        @using (Html.BeginForm("Delete", "Course", new { studentId = Model.Student.StudentId, courseId = courseEnrollment.CourseId }, FormMethod.Post))
                         {
                             <button type="submit" class="btn btn-danger">Delete</button>
                         }

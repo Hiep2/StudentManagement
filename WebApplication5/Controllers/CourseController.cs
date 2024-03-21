@@ -1,64 +1,60 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Ocsp;
 using WebApplication5.Models;
-using WebApplication5.Repositories;
 using WebApplication5.Services;
 
 namespace WebApplication5.Controllers
 {
     public class CourseController : Controller
     {
-        private readonly IStudentService courseRepository;
+        private readonly IStudentService courseEnrollmentRepository;
 
         public CourseController(IStudentService courseRepository)
         {
-            this.courseRepository = courseRepository ;
+            this.courseEnrollmentRepository = courseRepository;
         }
 
         public async Task<ActionResult> EditAsync(int studentId, int courseId)
         {
-            var courseDetail = await courseRepository.GetCourseDetailByStudentAsync(studentId, courseId);
+            var courseEnrollment = await courseEnrollmentRepository.GetCourseEnrollmentByStudentAsync(studentId, courseId);
 
-            if (courseDetail == null)
+            if (courseEnrollment == null)
             {
-                return NotFound(); // Vergewissern Sie sich, dass NotFound korrekt gehandhabt wird
+                return NotFound();
             }
 
-            return View(courseDetail);
+            return View(courseEnrollment);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditAsync(CourseDetail courseDetail)
+        public async Task<ActionResult> EditAsync(CourseEnrollment courseEnrollment)
         {
-            await courseRepository.UpdateCourseEnrollmentAsync(courseDetail);
-            return RedirectToAction("Details", "Student", new { id = courseDetail.StudentId });
+            await courseEnrollmentRepository.UpdateCourseEnrollmentAsync(courseEnrollment);
+            return RedirectToAction("Details", "Student", new { id = courseEnrollment.StudentId });
         }
 
         [HttpPost]
         public async Task<ActionResult> DeleteAsync(int studentId, int courseId)
         {
-            await courseRepository.DeleteCourseEnrollmentAsync(courseId, studentId);
+            await courseEnrollmentRepository.DeleteCourseEnrollmentAsync(courseId, studentId);
             return RedirectToAction("Details", "Student", new { id = studentId });
         }
 
         public ActionResult Create(int studentId)
         {
-            var model = new CourseDetail
-            {
-                StudentId = studentId // Stellen Sie sicher, dass dieser Wert korrekt gesetzt ist.
-            };
+            var model = new CourseEnrollment();
+            model.SetStudentId(studentId);
             return View(model);
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateAsync(int studentId, CourseDetail model)
+        public async Task<ActionResult> CreateAsync(int studentId, CourseEnrollment model)
         {
             if (ModelState.IsValid)
             {
-                await courseRepository.AddCourseDetailAsync(studentId, model);
+                await courseEnrollmentRepository.AddCourseEnrollmentAsync(studentId, model);
 
                 return RedirectToAction("Details", "Student", new { id = studentId });
             }
@@ -68,14 +64,14 @@ namespace WebApplication5.Controllers
 
         public async Task<ActionResult> AddAsync()
         {
-            var courses = await courseRepository.GetAllCoursesAsync();
+            var courses = await courseEnrollmentRepository.GetAllCoursesAsync();
             return View(courses);
         }
 
         [HttpPost]
-        public async Task<ActionResult> AssignCourseAsync(CourseDetail courseDetail)
+        public async Task<ActionResult> AssignCourseAsync(CourseEnrollment courseEnrollment)
         {
-            await courseRepository.AssignCourseToStudentAsync(courseDetail);
+            await courseEnrollmentRepository.AssignCourseEnrollmentToStudentAsync(courseEnrollment);
             return RedirectToAction("Index");
         }
     }
