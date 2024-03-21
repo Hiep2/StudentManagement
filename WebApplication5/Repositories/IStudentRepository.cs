@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using WebApplication5.Models;
+﻿using WebApplication5.Models;
 public interface IStudentRepository
 {
     Task<IEnumerable<Student>> GetAllStudentsAsync();
@@ -9,5 +7,5 @@ public interface IStudentRepository
     Task<Student> UpdateStudentAsync(Student student);
     Task DeleteStudentAsync(int studentId);
     Task<IEnumerable<Student>> SearchStudentsAsync(string searchString);
-    Task<List<CourseDetail>> GetCourseDetailsByStudentIdAsync(int studentId);
+    Task<List<CourseEnrollment>> GetCourseEnrollmentByStudentIdAsync(int studentId);
 }

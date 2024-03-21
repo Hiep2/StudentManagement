@@ -2,7 +2,7 @@
 {
     public class StudentDetailsViewModel
     {
-        public Student Student { get; set; }
-        public List<CourseDetail> Courses { get; set; } = new List<CourseDetail>();
+        public required Student Student { get; set; }
+        public List<CourseEnrollment> _CourseEnrollments { get; set; } = new List<CourseEnrollment>();
     }
 }

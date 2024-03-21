@@ -1,11 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client.Extensions.Msal;
-using Org.BouncyCastle.Crypto.Signers;
 using System.Globalization;
 using System.Xml.Linq;
 using WebApplication5.Models;
-using WebApplication5.Repositories;
 using WebApplication5.Services;
 
 namespace WebApplication5.Controllers
@@ -23,12 +19,10 @@ namespace WebApplication5.Controllers
             List<Student> students;
             if (string.IsNullOrWhiteSpace(searchString))
             {
-                // Warten auf das Ergebnis der Task und dann Konvertieren zu List
                 students = (await studentRepository.GetAllStudentsAsync()).ToList();
             }
             else
             {
-                // Warten auf das Ergebnis der Task und dann Konvertieren zu List
                 students = (await studentRepository.SearchStudentsAsync(searchString)).ToList();
             }
 
@@ -46,15 +40,9 @@ namespace WebApplication5.Controllers
             return View("CreateEditPartial", student);
         }
 
-        // GET: Student/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var student = await studentRepository.GetStudentByIdAsync(id); // Methode, um den Studenten anhand der ID zu finden;
+            var student = await studentRepository.GetStudentByIdAsync(id);
             if (student == null)
             {
                 return NotFound();
@@ -62,7 +50,6 @@ namespace WebApplication5.Controllers
 
             return View(student);
         }
-
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -88,7 +75,7 @@ namespace WebApplication5.Controllers
         {
             if (ModelState.IsValid)
             {
-                if(studentModel.StudentId == 0)
+                if (studentModel.StudentId == 0)
                 {
                     await studentRepository.AddStudentAsync(studentModel);
                 }
@@ -111,12 +98,12 @@ namespace WebApplication5.Controllers
                 return NotFound();
             }
 
-            var courseDetail = await studentRepository.GetCourseDetailsByStudentIdAsync(id);
+            var courseDetail = await studentRepository.GetCourseEnrollmentByStudentIdAsync(id);
 
             var viewModel = new StudentDetailsViewModel
             {
                 Student = student,
-                Courses = courseDetail
+                _CourseEnrollments = courseDetail
             };
 
             return View(viewModel);
@@ -136,8 +123,8 @@ namespace WebApplication5.Controllers
 
                         if (isFirstLine)
                         {
-                            isFirstLine = false; // Setzen Sie die Flag auf false nach der ersten Zeile
-                            continue; // Überspringen der aktuellen Iteration, um die Kopfzeile zu ignorieren
+                            isFirstLine = false;
+                            continue;
                         }
                         var fields = line?.Split(',');
 
@@ -147,24 +134,15 @@ namespace WebApplication5.Controllers
                             DateTime birthDate;
                             bool parseSuccess = DateTime.TryParseExact(
                                 dateString,
-                                "yyyy-MM-dd", // Das erwartete Format
-                                CultureInfo.InvariantCulture, // Verwenden Sie CultureInfo.InvariantCulture für ISO 8601-Daten
+                                "yyyy-MM-dd",
+                                CultureInfo.InvariantCulture,
                                 DateTimeStyles.None,
-                                out birthDate // Das resultierende DateTime-Objekt, wenn das Parsen erfolgreich war
+                                out birthDate
                             );
 
-                            var student = new Student
-                            {
-                                Name = fields[1],
-                                Sex = fields[2],
-                                BirthDate = birthDate,
-                                ClassName = fields[4],
-                                StudyYear = int.Parse(fields[5])
+                            var student = new Student(fields[1], fields[2], birthDate, fields[4], int.Parse(fields[5]));
 
-                                
-                            };
-
-                            studentRepository.UpdateStudentAsync(student);
+                            await studentRepository.UpdateStudentAsync(student);
                         }
                     }
                 }
@@ -172,23 +150,6 @@ namespace WebApplication5.Controllers
 
             return RedirectToAction("Index");
         }
-
-        [HttpPost]
-        public async Task<IActionResult> ImportXML(IFormFile file)
-        {
-            if (file != null && file.Length > 0)
-            {
-                using (var stream = file.OpenReadStream())
-                {
-                    var xmlDoc = XDocument.Load(stream);
-                    // Verwenden Sie hier die XML-Dokumentation, um die Daten zu extrahieren und in die Datenbank einzufügen
-                }
-            }
-
-            return RedirectToAction("Index");
-        }
-
-
 
     }
 }
