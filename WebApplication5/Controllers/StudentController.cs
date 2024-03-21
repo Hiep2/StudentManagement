@@ -1,21 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client.Extensions.Msal;
-using Org.BouncyCastle.Crypto.Signers;
 using System.Globalization;
-using System.Xml.Linq;
 using WebApplication5.Models;
-using WebApplication5.Repositories;
 using WebApplication5.Services;
 
 namespace WebApplication5.Controllers
 {
     public class StudentController : Controller
     {
-        private readonly IStudentService studentRepository;
+        private readonly IStudentService studentService;
         public StudentController(IStudentService studentRepository)
         {
-            this.studentRepository = studentRepository;
+            this.studentService = studentRepository;
         }
 
         public async Task<IActionResult> Index(string searchString)
@@ -24,12 +19,12 @@ namespace WebApplication5.Controllers
             if (string.IsNullOrWhiteSpace(searchString))
             {
                 // Warten auf das Ergebnis der Task und dann Konvertieren zu List
-                students = (await studentRepository.GetAllStudentsAsync()).ToList();
+                students = (await studentService.GetAllStudentsAsync()).ToList();
             }
             else
             {
                 // Warten auf das Ergebnis der Task und dann Konvertieren zu List
-                students = (await studentRepository.SearchStudentsAsync(searchString)).ToList();
+                students = (await studentService.SearchStudentsAsync(searchString)).ToList();
             }
 
             return View(new StudentViewModel()
@@ -38,12 +33,10 @@ namespace WebApplication5.Controllers
             });
         }
 
-
-
         public ActionResult Create()
         {
-            var student = new Student();
-            return View("CreateEditPartial", student);
+            var student = new Student() { Name = String.Empty};
+            return View(ViewNames.CreateEditPartial, student);
         }
 
         // GET: Student/Delete/5
@@ -54,7 +47,7 @@ namespace WebApplication5.Controllers
                 return NotFound();
             }
 
-            var student = await studentRepository.GetStudentByIdAsync(id); // Methode, um den Studenten anhand der ID zu finden;
+            var student = await studentService.GetStudentByIdAsync(id); // Methode, um den Studenten anhand der ID zu finden;
             if (student == null)
             {
                 return NotFound();
@@ -68,55 +61,55 @@ namespace WebApplication5.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmAsync(int id)
         {
-            await studentRepository.DeleteStudentAsync(id);
-            return RedirectToAction("Index");
+            await studentService.DeleteStudentAsync(id);
+            return RedirectToAction(ViewNames.Index);
         }
 
         public async Task<ActionResult> EditAsync(int id)
         {
-            var student = await studentRepository.GetStudentByIdAsync(id);
+            var student = await studentService.GetStudentByIdAsync(id);
             if (student == null)
             {
                 return NotFound();
             }
-            return View("CreateEditPartial", student);
+            return View(ViewNames.CreateEditPartial, student);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> SaveAsync(Student studentModel)
+        public async Task<ActionResult> SaveAsync(Student student)
         {
             if (ModelState.IsValid)
             {
-                if(studentModel.StudentId == 0)
+                if (student.StudentId == 0)
                 {
-                    await studentRepository.AddStudentAsync(studentModel);
+                    await studentService.AddStudentAsync(student);
                 }
                 else
                 {
-                    await studentRepository.UpdateStudentAsync(studentModel);
+                    await studentService.UpdateStudentAsync(student);
                 }
 
-                return RedirectToAction("Index");
+                return RedirectToAction(ViewNames.Index);
             }
 
-            return View("CreateOrEdit", studentModel);
+            return View(ViewNames.CreateEditPartial, student);
         }
 
         public async Task<ActionResult> Details(int id)
         {
-            var student = await studentRepository.GetStudentByIdAsync(id);
+            var student = await studentService.GetStudentByIdAsync(id);
             if (student == null)
             {
                 return NotFound();
             }
 
-            var courseDetail = await studentRepository.GetCourseDetailsByStudentIdAsync(id);
+            var courseEnrollment = await studentService.GetCourseEnrollmentsByStudentIdAsync(id);
 
             var viewModel = new StudentDetailsViewModel
             {
                 Student = student,
-                Courses = courseDetail
+                Courses = courseEnrollment
             };
 
             return View(viewModel);
@@ -161,34 +154,17 @@ namespace WebApplication5.Controllers
                                 ClassName = fields[4],
                                 StudyYear = int.Parse(fields[5])
 
-                                
+
                             };
 
-                            studentRepository.UpdateStudentAsync(student);
+                            await studentService.UpdateStudentAsync(student);
                         }
                     }
                 }
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction(ViewNames.Index);
         }
-
-        [HttpPost]
-        public async Task<IActionResult> ImportXML(IFormFile file)
-        {
-            if (file != null && file.Length > 0)
-            {
-                using (var stream = file.OpenReadStream())
-                {
-                    var xmlDoc = XDocument.Load(stream);
-                    // Verwenden Sie hier die XML-Dokumentation, um die Daten zu extrahieren und in die Datenbank einzufügen
-                }
-            }
-
-            return RedirectToAction("Index");
-        }
-
-
 
     }
 }

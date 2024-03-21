@@ -15,27 +15,76 @@ public class StudentService : IStudentService
 
     public async Task<IEnumerable<Student>> GetAllStudentsAsync()
     {
-        return await _studentRepository.GetAllStudentsAsync();
+        try
+        {
+            return await _studentRepository.GetAllStudentsAsync();
+        }
+        catch(Exception ex)
+        {
+            throw new ServiceException("An error occurred while retrieving all students.", ex);
+        }
+
     }
 
     public async Task<Student> GetStudentByIdAsync(int studentId)
     {
-        return await _studentRepository.GetStudentByIdAsync(studentId);
+        try
+        {
+            var student = await _studentRepository.GetStudentByIdAsync(studentId);
+            if (student == null)
+            {
+                throw new NotFoundException($"Student with ID {studentId} not found.");
+            }
+            return student;
+        }
+        catch (Exception ex)
+        {
+            throw new ServiceException($"An error occurred while retrieving student with ID {studentId}.", ex);
+        }   
     }
 
     public async Task<Student> AddStudentAsync(Student student)
     {
-        return await _studentRepository.AddStudentAsync(student);
+        try
+        {
+            if (student == null)
+            {
+                throw new NotFoundException($"Student with ID {student.StudentId} not found.");
+            }
+            return await _studentRepository.AddStudentAsync(student);
+        }
+        catch (Exception ex)
+        {
+            throw new ServiceException($"An error occurred while retrieving student with ID {student.StudentId}.", ex);
+        }
     }
 
     public async Task<Student> UpdateStudentAsync(Student student)
     {
-        return await _studentRepository.UpdateStudentAsync(student);
+        try
+        {
+            if (student == null)
+            {
+                throw new NotFoundException($"Student with ID {student.StudentId} not found.");
+            }
+            return await _studentRepository.UpdateStudentAsync(student); ;
+        }
+        catch (Exception ex)
+        {
+            throw new ServiceException($"An error occurred while retrieving student with ID {student.StudentId}.", ex);
+        }
     }
 
     public async Task DeleteStudentAsync(int studentId)
     {
-        await _studentRepository.DeleteStudentAsync(studentId);
+        try
+        {
+            await _studentRepository.DeleteStudentAsync(studentId);
+        }
+        catch (Exception ex)
+        {
+            throw new ServiceException($"An error occurred while retrieving student with ID {studentId}.", ex);
+        }
     }
 
     public async Task<IEnumerable<Student>> SearchStudentsAsync(string searchString)
@@ -43,14 +92,14 @@ public class StudentService : IStudentService
         return await _studentRepository.SearchStudentsAsync(searchString);
     }
 
-    public async Task<List<CourseDetail>> GetCourseDetailsByStudentIdAsync(int studentId)
+    public async Task<List<CourseEnrollment>> GetCourseEnrollmentsByStudentIdAsync(int studentId)
     {
-        return await _studentRepository.GetCourseDetailsByStudentIdAsync(studentId);
+        return await _studentRepository.GetCourseEnrollmentsByStudentIdAsync(studentId);
     }
 
-    public async Task UpdateCourseEnrollmentAsync(CourseDetail courseDetail)
+    public async Task UpdateCourseEnrollmentAsync(CourseEnrollment courseEnrollment)
     {
-        await _courseRepository.UpdateCourseEnrollmentAsync(courseDetail);
+        await _courseRepository.UpdateCourseEnrollmentAsync(courseEnrollment);
     }
 
     public async Task<List<Course>> GetAllCoursesAsync()
@@ -68,19 +117,19 @@ public class StudentService : IStudentService
         await _courseRepository.DeleteCourseEnrollmentAsync(courseId, studentId);
     }
 
-    public async Task<CourseDetail> GetCourseDetailByStudentAsync(int studentId, int courseId)
+    public async Task<CourseEnrollment> GetCourseEnrollmentByStudentAsync(int studentId, int courseId)
     {
-        return await _courseRepository.GetCourseDetailByStudentAsync(studentId, courseId);
+        return await _courseRepository.GetCourseEnrollmentByStudentAsync(studentId, courseId);
     }
 
-    public async Task AddCourseDetailAsync(int studentId, CourseDetail courseDetail)
+    public async Task AddCourseEnrollmentAsync(int studentId, CourseEnrollment courseEnrollment)
     {
-        await _courseRepository.AddCourseDetailAsync(studentId, courseDetail);
+        await _courseRepository.AddCourseEnrollmentAsync(studentId, courseEnrollment);
     }
 
-    public async Task AssignCourseToStudentAsync(CourseDetail courseDetail)
+    public async Task AssignCourseToStudentAsync(CourseEnrollment courseEnrollment)
     {
-        await _courseRepository.AssignCourseToStudentAsync(courseDetail);
+        await _courseRepository.AssignCourseToStudentAsync(courseEnrollment);
     }
 
 }

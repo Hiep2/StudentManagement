@@ -62,11 +62,11 @@ namespace WebApplication5.Repositories
             return await query.ToListAsync();
         }
 
-        public async Task<List<CourseDetail>> GetCourseDetailsByStudentIdAsync(int studentId)
+        public async Task<List<CourseEnrollment>> GetCourseEnrollmentsByStudentIdAsync(int studentId)
         {
-            var courseDetails = await _context.Enrollments
+            var courseEnrollments = await _context.Enrollments
                 .Where(e => e.StudentId == studentId)
-                .Select(e => new CourseDetail
+                .Select(e => new CourseEnrollment
                 {
                     CourseId = e.Course.CourseId,
                 CourseName = e.Course.CourseName,
@@ -76,7 +76,7 @@ namespace WebApplication5.Repositories
                 })
                 .ToListAsync();
 
-            return courseDetails;
+            return courseEnrollments;
         }
 
     }

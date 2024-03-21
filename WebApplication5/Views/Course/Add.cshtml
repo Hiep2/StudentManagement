@@ -5,8 +5,8 @@
 <table class="table">
     <thead>
         <tr>
-            <th>Kursname</th>
-            <th>Einheiten</th>
+            <th>Course</th>
+            <th>Units</th>
         </tr>
     </thead>
     <tbody>
@@ -17,7 +17,7 @@
                 <td>@course.CourseUnit</td>
                 <td>
                     <a class="btn btn-success">O</a>
-                    @using (Html.BeginForm("Delete", "Course", FormMethod.Post))
+                    @using (Html.BeginForm(ViewNames.Delete, ViewNames.Course, FormMethod.Post))
                     {
                         @Html.AntiForgeryToken()
                         <button type="submit" class="btn btn-danger btn-fixed-width">X</button>

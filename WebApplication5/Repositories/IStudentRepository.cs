@@ -9,5 +9,5 @@ public interface IStudentRepository
     Task<Student> UpdateStudentAsync(Student student);
     Task DeleteStudentAsync(int studentId);
     Task<IEnumerable<Student>> SearchStudentsAsync(string searchString);
-    Task<List<CourseDetail>> GetCourseDetailsByStudentIdAsync(int studentId);
+    Task<List<CourseEnrollment>> GetCourseEnrollmentsByStudentIdAsync(int studentId);
 }

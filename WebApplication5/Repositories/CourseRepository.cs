@@ -27,24 +27,24 @@ namespace WebApplication5.Repositories
             return await _context.Enrollments.ToListAsync();
         }
 
-        public async Task UpdateCourseEnrollmentAsync(CourseDetail courseDetail)
+        public async Task UpdateCourseEnrollmentAsync(CourseEnrollment courseEnrollment)
         {
-            var course = await _context.Courses.FindAsync(courseDetail.CourseId);
+            var course = await _context.Courses.FindAsync(courseEnrollment.CourseId);
             if (course != null)
             {
                 // Kurs aktualisieren
-                course.CourseName = courseDetail.CourseName;
-                course.CourseUnit = courseDetail.CourseUnit;
+                course.CourseName = courseEnrollment.CourseName;
+                course.CourseUnit = courseEnrollment.CourseUnit;
                 _context.Courses.Update(course);
             }
 
             var enrollment = await _context.Enrollments
-                             .FirstOrDefaultAsync(e => e.CourseId == courseDetail.CourseId && e.StudentId == courseDetail.StudentId);
+                             .FirstOrDefaultAsync(e => e.CourseId == courseEnrollment.CourseId && e.StudentId == courseEnrollment.StudentId);
             if (enrollment != null)
             {
                 // Einschreibung aktualisieren
-                enrollment.ProzessGrade = courseDetail.ProzessGrade;
-                enrollment.ComponentGrade = courseDetail.ComponentGrade;
+                enrollment.ProzessGrade = courseEnrollment.ProzessGrade;
+                enrollment.ComponentGrade = courseEnrollment.ComponentGrade;
                 _context.Enrollments.Update(enrollment);
             }
 
@@ -77,11 +77,11 @@ namespace WebApplication5.Repositories
             }
         }
 
-        public async Task<CourseDetail> GetCourseDetailByStudentAsync(int studentId, int courseId)
+        public async Task<CourseEnrollment> GetCourseEnrollmentByStudentAsync(int studentId, int courseId)
         {
-            var courseDetail = await _context.Enrollments
+            var courseEnrollment = await _context.Enrollments
                 .Where(e => e.CourseId == courseId && e.StudentId == studentId)
-                .Select(e => new CourseDetail
+                .Select(e => new CourseEnrollment
                 {
                     CourseId = e.CourseId,
                     StudentId = e.StudentId,
@@ -92,15 +92,15 @@ namespace WebApplication5.Repositories
                 })
                 .FirstOrDefaultAsync();
 
-            return courseDetail;
+            return courseEnrollment;
         }
 
-        public async Task AddCourseDetailAsync(int studentId, CourseDetail courseDetail)
+        public async Task AddCourseEnrollmentAsync(int studentId, CourseEnrollment courseEnrollment)
         {
             var course = new Course
             {
-                CourseName = courseDetail.CourseName,
-                CourseUnit = courseDetail.CourseUnit
+                CourseName = courseEnrollment.CourseName,
+                CourseUnit = courseEnrollment.CourseUnit
             };
 
             _context.Courses.Add(course);
@@ -110,20 +110,20 @@ namespace WebApplication5.Repositories
             {
                 StudentId = studentId,
                 CourseId = course.CourseId,
-                ProzessGrade = courseDetail.ProzessGrade,
-                ComponentGrade = courseDetail.ComponentGrade
+                ProzessGrade = courseEnrollment.ProzessGrade,
+                ComponentGrade = courseEnrollment.ComponentGrade
             };
 
             _context.Enrollments.Add(enrollment);
             await _context.SaveChangesAsync();
         }
 
-        public async Task AssignCourseToStudentAsync(CourseDetail courseDetail)
+        public async Task AssignCourseToStudentAsync(CourseEnrollment courseEnrollment)
         {
             var enrollment = new Enrollment
             {
-                StudentId = courseDetail.StudentId,
-                CourseId = courseDetail.CourseId,
+                StudentId = courseEnrollment.StudentId,
+                CourseId = courseEnrollment.CourseId,
                 ProzessGrade = 0,
                 ComponentGrade = 0
             };

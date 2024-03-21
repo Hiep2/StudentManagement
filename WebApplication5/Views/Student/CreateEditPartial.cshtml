@@ -2,12 +2,12 @@
 
 @{
     var isEdit = Model.StudentId != 0;
-    var save = "Save";
+    var save = ViewNames.Save;
 }
 
 <h2>Add Student</h2>
 
-@using (Html.BeginForm("Save", "Student", FormMethod.Post))
+@using (Html.BeginForm(ViewNames.Save, ViewNames.Student, FormMethod.Post))
 {
     @Html.AntiForgeryToken()
 

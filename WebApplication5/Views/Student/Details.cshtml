@@ -63,8 +63,8 @@
                     <td>@course.finalGrade</td>
                     <td>@course.isPassed</td>
                     <td>
-                        <a href="@Url.Action("Edit", "Course", new { studentId = Model.Student.StudentId, courseId = course.CourseId })" class="btn btn-info">Edit</a>
-                        @using (Html.BeginForm("Delete", "Course", new { studentId = Model.Student.StudentId, courseId = course.CourseId }, FormMethod.Post))
+                        <a href="@Url.Action(ViewNames.Edit, ViewNames.Course, new { studentId = Model.Student.StudentId, courseId = course.CourseId })" class="btn btn-info">Edit</a>
+                        @using (Html.BeginForm(ViewNames.Delete, ViewNames.Course, new { studentId = Model.Student.StudentId, courseId = course.CourseId }, FormMethod.Post))
                         {
                             <button type="submit" class="btn btn-danger">Delete</button>
                         }
@@ -73,8 +73,8 @@
             }
         </tbody>
     </table>
-    <a href="@Url.Action("Create", "Course", new { studentId = Model.Student.StudentId})" class="btn btn-primary">Add New Course Detail</a>
-    <a href="@Url.Action("Add", "Course", new { studentId = Model.Student.StudentId})" class="btn btn-primary">Add New Course</a>
+    <a href="@Url.Action(ViewNames.Create, ViewNames.Course, new { studentId = Model.Student.StudentId})" class="btn btn-primary">Add New Course Detail</a>
+    <a href="@Url.Action(ViewNames.Add, ViewNames.Course, new { studentId = Model.Student.StudentId})" class="btn btn-primary">Add New Course</a>
 </div>
 
 <a href="@Url.Action("Index", "Student")">Return</a>

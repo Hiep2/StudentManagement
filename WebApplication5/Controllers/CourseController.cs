@@ -1,82 +1,79 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Ocsp;
 using WebApplication5.Models;
-using WebApplication5.Repositories;
 using WebApplication5.Services;
 
 namespace WebApplication5.Controllers
 {
     public class CourseController : Controller
     {
-        private readonly IStudentService courseRepository;
+        private readonly IStudentService studentService;
 
         public CourseController(IStudentService courseRepository)
         {
-            this.courseRepository = courseRepository ;
+            this.studentService = courseRepository;
         }
 
         public async Task<ActionResult> EditAsync(int studentId, int courseId)
         {
-            var courseDetail = await courseRepository.GetCourseDetailByStudentAsync(studentId, courseId);
+            var courseEnrollment = await studentService.GetCourseEnrollmentByStudentAsync(studentId, courseId);
 
-            if (courseDetail == null)
+            if (courseEnrollment == null)
             {
                 return NotFound(); // Vergewissern Sie sich, dass NotFound korrekt gehandhabt wird
             }
 
-            return View(courseDetail);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditAsync(CourseDetail courseDetail)
-        {
-            await courseRepository.UpdateCourseEnrollmentAsync(courseDetail);
-            return RedirectToAction("Details", "Student", new { id = courseDetail.StudentId });
+            return View(ViewNames.CreateEditPartial, courseEnrollment);
         }
 
         [HttpPost]
         public async Task<ActionResult> DeleteAsync(int studentId, int courseId)
         {
-            await courseRepository.DeleteCourseEnrollmentAsync(courseId, studentId);
-            return RedirectToAction("Details", "Student", new { id = studentId });
+            await studentService.DeleteCourseEnrollmentAsync(courseId, studentId);
+            return RedirectToAction(ViewNames.Details, ViewNames.Student, new { id = studentId });
         }
 
         public ActionResult Create(int studentId)
         {
-            var model = new CourseDetail
+            var courseEnrollment = new CourseEnrollment
             {
-                StudentId = studentId // Stellen Sie sicher, dass dieser Wert korrekt gesetzt ist.
+                StudentId = studentId
             };
-            return View(model);
+            return View(ViewNames.CreateEditPartial, courseEnrollment);
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateAsync(int studentId, CourseDetail model)
+        public async Task<ActionResult> SaveAsync(int studentId, CourseEnrollment courseEnrollment)
         {
             if (ModelState.IsValid)
             {
-                await courseRepository.AddCourseDetailAsync(studentId, model);
 
-                return RedirectToAction("Details", "Student", new { id = studentId });
+                if (courseEnrollment.CourseId == 0)
+                {
+                    await studentService.AddCourseEnrollmentAsync(studentId, courseEnrollment);
+                }
+                else
+                {
+                    await studentService.UpdateCourseEnrollmentAsync(courseEnrollment);
+                }
+
+                return RedirectToAction(ViewNames.Details, ViewNames.Student, new { id = courseEnrollment.StudentId });
             }
-
-            return View(model);
+            return View(ViewNames.CreateEditPartial, courseEnrollment);
         }
 
         public async Task<ActionResult> AddAsync()
         {
-            var courses = await courseRepository.GetAllCoursesAsync();
+            var courses = await studentService.GetAllCoursesAsync();
             return View(courses);
         }
 
         [HttpPost]
-        public async Task<ActionResult> AssignCourseAsync(CourseDetail courseDetail)
+        public async Task<ActionResult> AssignCourseAsync(CourseEnrollment courseEnrollment)
         {
-            await courseRepository.AssignCourseToStudentAsync(courseDetail);
-            return RedirectToAction("Index");
+            await studentService.AssignCourseToStudentAsync(courseEnrollment);
+            return RedirectToAction(ViewNames.Index);
         }
     }
 }

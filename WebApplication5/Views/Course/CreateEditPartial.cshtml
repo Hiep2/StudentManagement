@@ -1,13 +1,22 @@
-﻿@model CourseDetail
+﻿@model CourseEnrollment
+@{
+    var isEdit = Model.StudentId != 0;
+    var save = ViewNames.Save;
+}
 
-<h2>Edit Course</h2>
+<h2>Add Course</h2>
 
-@using (Html.BeginForm("Edit", "Course", FormMethod.Post))
+@using (Html.BeginForm(ViewNames.Save, ViewNames.Course, FormMethod.Post))
 {
     @Html.AntiForgeryToken()
 
-    @Html.HiddenFor(model => model.CourseId)
-    @Html.HiddenFor(model => model.StudentId)
+    @if (isEdit)
+    {
+        @Html.HiddenFor(model => model.StudentId)
+        @Html.HiddenFor(model => model.CourseId)
+    }
+
+    @Html.AntiForgeryToken()
 
     <div class="form-group">
         @Html.LabelFor(model => model.CourseName)
@@ -32,6 +41,5 @@
         @Html.TextBoxFor(model => model.ComponentGrade, new { @class = "form-control" })
         @Html.ValidationMessageFor(model => model.ComponentGrade)
     </div>
-
-    <input type="submit" value="Save" class="btn btn-default" />
+    <button type="submit" class="btn btn-primary">Save</button>
 }

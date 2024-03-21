@@ -27,7 +27,7 @@ namespace WebApplication5.Repositories
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Beispiel: Eine Entität explizit als keyless markieren
-            modelBuilder.Entity<CourseDetail>().HasKey(c => c.CourseId);
+            modelBuilder.Entity<CourseEnrollment>().HasKey(c => c.CourseId);
 
             // Beispiel: Primärschlüssel für eine Entität definieren
             modelBuilder.Entity<Student>().HasKey(s => s.StudentId);    

@@ -1,6 +1,6 @@
 ﻿namespace WebApplication5.Models
 {
-    public class CourseDetail
+    public class CourseEnrollment
     {
         public int CourseId { get; set; }
         public int StudentId { get; set; }

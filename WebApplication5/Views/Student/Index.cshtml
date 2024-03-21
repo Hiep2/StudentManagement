@@ -47,7 +47,7 @@
 
 <div class="sticky-top">
     <h2>Studentlist</h2>
-    @using (Html.BeginForm("Index", "Student", FormMethod.Get))
+    @using (Html.BeginForm(ViewNames.Index, ViewNames.Student, FormMethod.Get))
     {
         <p>
             Name: @Html.TextBox("searchString")
@@ -87,9 +87,9 @@
                         <td>@student.ClassName</td>
                         <td>@student.StudyYear</td>
                         <td>
-                            <a href="@Url.Action("Edit", "Student", new { id = student.StudentId })" class="btn btn-info btn-fixed-width btn-margin-vertical">Edit</a>
-                            <a href="@Url.Action("Details", "Student", new { id = student.StudentId })" class="btn btn-info btn-fixed-width btn-margin-vertical">Details</a>
-                            <a href="@Url.Action("Delete", "Student", new { id = student.StudentId })" class="btn btn-danger btn-fixed-width btn-margin-vertical">Delete</a>
+                            <a href="@Url.Action(ViewNames.Edit, ViewNames.Student, new { id = student.StudentId })" class="btn btn-info btn-fixed-width btn-margin-vertical">Edit</a>
+                            <a href="@Url.Action(ViewNames.Details, ViewNames.Student, new { id = student.StudentId })" class="btn btn-info btn-fixed-width btn-margin-vertical">Details</a>
+                            <a href="@Url.Action(ViewNames.Delete, ViewNames.Student, new { id = student.StudentId })" class="btn btn-danger btn-fixed-width btn-margin-vertical">Delete</a>
                         </td>
                     </tr>
 
