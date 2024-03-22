@@ -1,4 +1,6 @@
-﻿namespace WebApplication5.Models
+﻿using Org.BouncyCastle.Utilities.Encoders;
+
+namespace WebApplication5.Models
 {
     public class Student
     {

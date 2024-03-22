@@ -131,5 +131,4 @@ public class StudentService : IStudentService
     {
         await _courseEnrollmentRepository.AssignCourseEnrollmentToStudentAsync(courseEnrollment);
     }
-
 }

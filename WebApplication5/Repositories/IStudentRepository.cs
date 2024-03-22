@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using WebApplication5.Models;
+﻿using WebApplication5.Models;
 public interface IStudentRepository
 {
     Task<IEnumerable<Student>> GetAllStudentsAsync();

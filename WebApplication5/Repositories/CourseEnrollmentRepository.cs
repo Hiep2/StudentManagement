@@ -84,6 +84,8 @@ namespace WebApplication5.Repositories
             }
         }
 
+
+
         public async Task DeleteCourseEnrollmentAsync(int courseId, int studentId)
         {
             var enrollment = await _context.Enrollments
@@ -91,7 +93,7 @@ namespace WebApplication5.Repositories
 
             if (enrollment != null)
             {
-                _context.Enrollments.Remove(enrollment);               
+                _context.Enrollments.Remove(enrollment);
                 await _context.SaveChangesAsync();
             }
         }
@@ -104,7 +106,7 @@ namespace WebApplication5.Repositories
                 .FirstOrDefaultAsync();
 
             if (courseEnrollment == null)
-                {
+            {
                 throw new KeyNotFoundException($"Course with the ID {courseId} was not found in the Student with the ID {studentId}.");
             }
 
@@ -112,7 +114,7 @@ namespace WebApplication5.Repositories
         }
 
         public async Task AddCourseEnrollmentToStudentAsync(int studentId, CourseEnrollment courseEnrollment)
-            {
+        {
             var course = new Course(courseEnrollment.CourseName, courseEnrollment.CourseUnit);
             _context.Courses.Add(course);
             await _context.SaveChangesAsync();
@@ -124,8 +126,8 @@ namespace WebApplication5.Repositories
         }
 
         public async Task AssignCourseEnrollmentToStudentAsync(CourseEnrollment courseEnrollment)
-            {
-            var enrollment = new Enrollment(courseEnrollment.CourseId, courseEnrollment.StudentId, courseEnrollment.ProzessGrade, courseEnrollment.ComponentGrade); 
+        {
+            var enrollment = new Enrollment(courseEnrollment.CourseId, courseEnrollment.StudentId, courseEnrollment.ProzessGrade, courseEnrollment.ComponentGrade);
 
             _context.Enrollments.Add(enrollment);
             await _context.SaveChangesAsync();

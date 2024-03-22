@@ -18,13 +18,11 @@ namespace WebApplication5.Controllers
             List<Student> students;
             if (string.IsNullOrWhiteSpace(searchString))
             {
-                // Warten auf das Ergebnis der Task und dann Konvertieren zu List
-                students = (await studentService.GetAllStudentsAsync()).ToList();
+                students = (await studentRepository.GetAllStudentsAsync()).ToList();
             }
             else
             {
-                // Warten auf das Ergebnis der Task und dann Konvertieren zu List
-                students = (await studentService.SearchStudentsAsync(searchString)).ToList();
+                students = (await studentRepository.SearchStudentsAsync(searchString)).ToList();
             }
 
             return View(new StudentViewModel()
@@ -39,15 +37,9 @@ namespace WebApplication5.Controllers
             return View(ViewNames.CreateEditPartial, student);
         }
 
-        // GET: Student/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var student = await studentService.GetStudentByIdAsync(id); // Methode, um den Studenten anhand der ID zu finden;
+            var student = await studentRepository.GetStudentByIdAsync(id);
             if (student == null)
             {
                 return NotFound();
@@ -55,7 +47,6 @@ namespace WebApplication5.Controllers
 
             return View(student);
         }
-
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -81,7 +72,7 @@ namespace WebApplication5.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (student.StudentId == 0)
+                if (studentModel.StudentId == 0)
                 {
                     await studentService.AddStudentAsync(student);
                 }
@@ -104,7 +95,7 @@ namespace WebApplication5.Controllers
                 return NotFound();
             }
 
-            var courseEnrollment = await studentService.GetCourseEnrollmentsByStudentIdAsync(id);
+            var courseDetail = await studentRepository.GetCourseEnrollmentByStudentIdAsync(id);
 
             var viewModel = new StudentDetailsViewModel
             {
@@ -129,8 +120,8 @@ namespace WebApplication5.Controllers
 
                         if (isFirstLine)
                         {
-                            isFirstLine = false; // Setzen Sie die Flag auf false nach der ersten Zeile
-                            continue; // Überspringen der aktuellen Iteration, um die Kopfzeile zu ignorieren
+                            isFirstLine = false;
+                            continue;
                         }
                         var fields = line?.Split(',');
 
@@ -140,24 +131,15 @@ namespace WebApplication5.Controllers
                             DateTime birthDate;
                             bool parseSuccess = DateTime.TryParseExact(
                                 dateString,
-                                "yyyy-MM-dd", // Das erwartete Format
-                                CultureInfo.InvariantCulture, // Verwenden Sie CultureInfo.InvariantCulture für ISO 8601-Daten
+                                "yyyy-MM-dd",
+                                CultureInfo.InvariantCulture,
                                 DateTimeStyles.None,
-                                out birthDate // Das resultierende DateTime-Objekt, wenn das Parsen erfolgreich war
+                                out birthDate
                             );
 
-                            var student = new Student
-                            {
-                                Name = fields[1],
-                                Sex = fields[2],
-                                BirthDate = birthDate,
-                                ClassName = fields[4],
-                                StudyYear = int.Parse(fields[5])
+                            var student = new Student(fields[1], fields[2], birthDate, fields[4], int.Parse(fields[5]));
 
-
-                            };
-
-                            await studentService.UpdateStudentAsync(student);
+                            await studentRepository.UpdateStudentAsync(student);
                         }
                     }
                 }

@@ -19,7 +19,7 @@ namespace WebApplication5.Controllers
 
             if (courseEnrollment == null)
             {
-                return NotFound(); // Vergewissern Sie sich, dass NotFound korrekt gehandhabt wird
+                return NotFound();
             }
 
             return View(ViewNames.CreateEditPartial, courseEnrollment);
