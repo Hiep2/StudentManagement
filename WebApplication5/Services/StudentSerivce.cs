@@ -5,9 +5,9 @@ using WebApplication5.Services;
 public class StudentService : IStudentService
 {
     private readonly IStudentRepository _studentRepository;
-    private readonly ICourseRepository _courseRepository;
+    private readonly ICourseEnrollmentRepository _courseRepository;
 
-    public StudentService(IStudentRepository studentRepository, ICourseRepository courseRepository)
+    public StudentService(IStudentRepository studentRepository, ICourseEnrollmentRepository courseRepository)
     {
         _studentRepository = studentRepository;
         _courseRepository = courseRepository;
@@ -104,12 +104,12 @@ public class StudentService : IStudentService
 
     public async Task<List<Course>> GetAllCoursesAsync()
     {
-        return await _courseRepository.GetAllCoursesAsync();
+        return await _courseRepository.GetAllStudentCoursesAsync();
     }
 
     public async Task<List<Enrollment>> GetAllEnrollmentsAsync()
     {
-        return await _courseRepository.GetAllEnrollmentsAsync();
+        return await _courseRepository.GetAllStudentEnrollmentsAsync();
     }
 
     public async Task DeleteCourseEnrollmentAsync(int courseId, int studentId)
@@ -131,5 +131,4 @@ public class StudentService : IStudentService
     {
         await _courseRepository.AssignCourseToStudentAsync(courseEnrollment);
     }
-
 }
