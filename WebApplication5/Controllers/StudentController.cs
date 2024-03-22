@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
+using WebApplication5.IRepositories;
 using WebApplication5.Models;
-using WebApplication5.Services;
 
 namespace WebApplication5.Controllers
 {
     public class StudentController : Controller
     {
         private readonly IStudentService studentService;
-        public StudentController(IStudentService studentRepository)
+        public StudentController(IStudentService studentService)
         {
-            this.studentService = studentRepository;
+            this.studentService = studentService;
         }
 
         public async Task<IActionResult> Index(string searchString)
@@ -18,11 +18,11 @@ namespace WebApplication5.Controllers
             List<Student> students;
             if (string.IsNullOrWhiteSpace(searchString))
             {
-                students = (await studentRepository.GetAllStudentsAsync()).ToList();
+                students = (await studentService.GetAllStudentsAsync()).ToList();
             }
             else
             {
-                students = (await studentRepository.SearchStudentsAsync(searchString)).ToList();
+                students = (await studentService.SearchStudentsAsync(searchString)).ToList();
             }
 
             return View(new StudentViewModel()
@@ -33,13 +33,13 @@ namespace WebApplication5.Controllers
 
         public ActionResult Create()
         {
-            var student = new Student() { Name = String.Empty};
+            var student = new Student();
             return View(ViewNames.CreateEditPartial, student);
         }
 
         public async Task<ActionResult> Delete(int id)
         {
-            var student = await studentRepository.GetStudentByIdAsync(id);
+            var student = await studentService.GetStudentByIdAsync(id);
             if (student == null)
             {
                 return NotFound();
@@ -72,7 +72,7 @@ namespace WebApplication5.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (studentModel.StudentId == 0)
+                if (student.StudentId == 0)
                 {
                     await studentService.AddStudentAsync(student);
                 }
@@ -95,7 +95,7 @@ namespace WebApplication5.Controllers
                 return NotFound();
             }
 
-            var courseDetail = await studentRepository.GetCourseEnrollmentByStudentIdAsync(id);
+            var courseEnrollment = await studentService.GetCourseEnrollmentsByStudentIdAsync(id);
 
             var viewModel = new StudentDetailsViewModel
             {
@@ -139,7 +139,7 @@ namespace WebApplication5.Controllers
 
                             var student = new Student(fields[1], fields[2], birthDate, fields[4], int.Parse(fields[5]));
 
-                            await studentRepository.UpdateStudentAsync(student);
+                            await studentService.UpdateStudentAsync(student);
                         }
                     }
                 }

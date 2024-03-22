@@ -1,9 +1,6 @@
-﻿using Dapper;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MySqlConnector;
-using Mysqlx.Crud;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Data;
+using WebApplication5.IRepositories;
 using WebApplication5.Models;
 
 namespace WebApplication5.Repositories
@@ -62,12 +59,16 @@ namespace WebApplication5.Repositories
             }
         }
 
-        private async Task UpdateCourseAsync(int courseId, string newName, int newUnits)
+        private async Task UpdateCourseAsync(int courseId, string courseName, int courseUnit)
         {
             var course = await _context.Courses.FindAsync(courseId);
             if (course != null)
             {
-                course = new Course(newName, newUnits);
+                course = new Course
+                {
+                    CourseName = courseName,
+                    CourseUnit = courseUnit
+                };
                 _context.Courses.Update(course);
             }
         }
@@ -102,7 +103,14 @@ namespace WebApplication5.Repositories
         {
             var courseEnrollment = await _context.Enrollments
                 .Where(e => e.CourseId == courseId && e.StudentId == studentId)
-                .Select(e => new CourseEnrollment(e.CourseId, e.Course.CourseName, e.Course.CourseUnit, e.ProzessGrade, e.ComponentGrade, studentId))
+                .Select(e => new CourseEnrollment(
+                        e.CourseId,
+                        e.Course.CourseName,
+                        e.Course.CourseUnit,
+                        e.ProzessGrade,
+                        e.ComponentGrade,
+                        e.StudentId
+                        ))
                 .FirstOrDefaultAsync();
 
             if (courseEnrollment == null)
@@ -115,11 +123,21 @@ namespace WebApplication5.Repositories
 
         public async Task AddCourseEnrollmentToStudentAsync(int studentId, CourseEnrollment courseEnrollment)
         {
-            var course = new Course(courseEnrollment.CourseName, courseEnrollment.CourseUnit);
+            var course = new Course
+            {
+                CourseName = courseEnrollment.CourseName,
+                CourseUnit = courseEnrollment.CourseUnit
+            };
+
             _context.Courses.Add(course);
             await _context.SaveChangesAsync();
 
-            var enrollment = new Enrollment(course.CourseId, studentId, courseEnrollment.ProzessGrade, courseEnrollment.ComponentGrade);
+            var enrollment = new Enrollment(
+                course.CourseId, 
+                studentId, 
+                courseEnrollment.ProzessGrade, 
+                courseEnrollment.ComponentGrade
+                );
             _context.Enrollments.Add(enrollment);
 
             await _context.SaveChangesAsync();
@@ -127,7 +145,12 @@ namespace WebApplication5.Repositories
 
         public async Task AssignCourseEnrollmentToStudentAsync(CourseEnrollment courseEnrollment)
         {
-            var enrollment = new Enrollment(courseEnrollment.CourseId, courseEnrollment.StudentId, courseEnrollment.ProzessGrade, courseEnrollment.ComponentGrade);
+            var enrollment = new Enrollment(
+                courseEnrollment.CourseId, 
+                courseEnrollment.StudentId, 
+                courseEnrollment.ProzessGrade, 
+                courseEnrollment.ComponentGrade
+                );
 
             _context.Enrollments.Add(enrollment);
             await _context.SaveChangesAsync();

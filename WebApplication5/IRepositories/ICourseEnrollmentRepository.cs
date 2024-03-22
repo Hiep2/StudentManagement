@@ -1,6 +1,6 @@
 ﻿using WebApplication5.Models;
 
-namespace WebApplication5.Repositories
+namespace WebApplication5.IRepositories
 {
     public interface ICourseEnrollmentRepository
     {

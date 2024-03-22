@@ -1,6 +1,5 @@
-﻿using WebApplication5.Models;
-using WebApplication5.Repositories;
-using WebApplication5.Services;
+﻿using WebApplication5.IRepositories;
+using WebApplication5.Models;
 
 public class StudentService : IStudentService
 {

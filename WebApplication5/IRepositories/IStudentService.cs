@@ -1,6 +1,6 @@
 ﻿using WebApplication5.Models;
 
-namespace WebApplication5.Services
+namespace WebApplication5.IRepositories
 {
     public interface IStudentService
     {
