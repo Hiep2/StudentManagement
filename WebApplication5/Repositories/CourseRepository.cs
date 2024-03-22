@@ -29,30 +29,12 @@ namespace WebApplication5.Repositories
 
         public async Task UpdateCourseEnrollmentAsync(CourseEnrollment courseEnrollment)
         {
-            var course = await _context.Courses.FindAsync(courseEnrollment.CourseId);
-            if (course != null)
-            {
-                // Kurs aktualisieren
-                course.CourseName = courseEnrollment.CourseName;
-                course.CourseUnit = courseEnrollment.CourseUnit;
-                _context.Courses.Update(course);
-            }
-
-            var enrollment = await _context.Enrollments
-                             .FirstOrDefaultAsync(e => e.CourseId == courseEnrollment.CourseId && e.StudentId == courseEnrollment.StudentId);
-            if (enrollment != null)
-            {
-                // Einschreibung aktualisieren
-                enrollment.ProzessGrade = courseEnrollment.ProzessGrade;
-                enrollment.ComponentGrade = courseEnrollment.ComponentGrade;
-                _context.Enrollments.Update(enrollment);
-            }
-
-            // Die Änderungen in einer Transaktion speichern
             using (var transaction = _context.Database.BeginTransaction())
             {
                 try
                 {
+                    await UpdateCourseAsync(courseEnrollment.CourseId, courseEnrollment.CourseName, courseEnrollment.CourseUnit);
+                    await UpdateEnrollmentGradesAsync(courseEnrollment.CourseId, courseEnrollment.StudentId, courseEnrollment.ProzessGrade, courseEnrollment.ComponentGrade);
                     await _context.SaveChangesAsync();
                     await transaction.CommitAsync();
                 }
@@ -64,6 +46,27 @@ namespace WebApplication5.Repositories
             }
         }
 
+        private async Task UpdateCourseAsync(int courseId, string newName, int newUnits)
+        {
+            var course = await _context.Courses.FindAsync(courseId);
+            if (course != null)
+            {
+                course = new Course(newName, newUnits);
+                _context.Courses.Update(course);
+            }
+        }
+
+        private async Task UpdateEnrollmentGradesAsync(int courseId, int studentId, double newProzessGrade, double newComponentGrade)
+        {
+            var enrollment = await _context.Enrollments
+                                .FirstOrDefaultAsync(e => e.CourseId == courseId && e.StudentId == studentId);
+            if (enrollment != null)
+            {
+                enrollment.SetProzessGrade(newProzessGrade);
+                enrollment.SetComponentGrade(newComponentGrade);
+                _context.Enrollments.Update(enrollment);
+            }
+        }
 
         public async Task DeleteCourseEnrollmentAsync(int courseId, int studentId)
         {
@@ -81,52 +84,31 @@ namespace WebApplication5.Repositories
         {
             var courseEnrollment = await _context.Enrollments
                 .Where(e => e.CourseId == courseId && e.StudentId == studentId)
-                .Select(e => new CourseEnrollment
-                {
-                    CourseId = e.CourseId,
-                    StudentId = e.StudentId,
-                    CourseName = e.Course.CourseName,
-                    CourseUnit = e.Course.CourseUnit,
-                    ProzessGrade = e.ProzessGrade,
-                    ComponentGrade = e.ComponentGrade
-                })
+                .Select(e => new CourseEnrollment(e.CourseId, e.Course.CourseName, e.Course.CourseUnit, e.ProzessGrade, e.ComponentGrade, studentId))
                 .FirstOrDefaultAsync();
+
+            if (courseEnrollment == null)
+            {
+                throw new KeyNotFoundException($"Course with the ID {courseId} was not found in the Student with the ID {studentId}.");
+            }
 
             return courseEnrollment;
         }
 
         public async Task AddCourseEnrollmentAsync(int studentId, CourseEnrollment courseEnrollment)
         {
-            var course = new Course
-            {
-                CourseName = courseEnrollment.CourseName,
-                CourseUnit = courseEnrollment.CourseUnit
-            };
-
+            var course = new Course(courseEnrollment.CourseName, courseEnrollment.CourseUnit);
             _context.Courses.Add(course);
-            await _context.SaveChangesAsync();
 
-            var enrollment = new Enrollment
-            {
-                StudentId = studentId,
-                CourseId = course.CourseId,
-                ProzessGrade = courseEnrollment.ProzessGrade,
-                ComponentGrade = courseEnrollment.ComponentGrade
-            };
-
+            var enrollment = new Enrollment(course.CourseId, studentId, courseEnrollment.ProzessGrade, courseEnrollment.ComponentGrade);
             _context.Enrollments.Add(enrollment);
+
             await _context.SaveChangesAsync();
         }
 
         public async Task AssignCourseToStudentAsync(CourseEnrollment courseEnrollment)
         {
-            var enrollment = new Enrollment
-            {
-                StudentId = courseEnrollment.StudentId,
-                CourseId = courseEnrollment.CourseId,
-                ProzessGrade = 0,
-                ComponentGrade = 0
-            };
+            var enrollment = new Enrollment(courseEnrollment.CourseId, courseEnrollment.StudentId, courseEnrollment.ProzessGrade, courseEnrollment.ComponentGrade); 
 
             _context.Enrollments.Add(enrollment);
             await _context.SaveChangesAsync();
