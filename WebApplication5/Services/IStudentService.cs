@@ -15,8 +15,8 @@ namespace WebApplication5.Services
         Task<List<Enrollment>> GetAllEnrollmentsAsync();
         Task UpdateCourseEnrollmentAsync(CourseEnrollment courseEnrollment);
         Task DeleteCourseEnrollmentAsync(int courseId, int studentId);
-        Task<CourseEnrollment> GetCourseEnrollmentByStudentAsync(int studentId, int courseId);
-        Task AddCourseEnrollmentAsync(int studentId, CourseEnrollment courseEnrollment);
-        Task AssignCourseToStudentAsync(CourseEnrollment courseEnrollment);
+        Task<CourseEnrollment> GetCourseEnrollmentFromStudentAsync(int studentId, int courseId);
+        Task AddCourseEnrollmentToStudentAsync(int studentId, CourseEnrollment courseEnrollment);
+        Task AssignCourseEnrollmentToStudentAsync(CourseEnrollment courseEnrollment);
     }
 }

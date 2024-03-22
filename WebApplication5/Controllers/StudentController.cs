@@ -109,7 +109,7 @@ namespace WebApplication5.Controllers
             var viewModel = new StudentDetailsViewModel
             {
                 Student = student,
-                Courses = courseEnrollment
+                _CoursesEnrollments = courseEnrollment
             };
 
             return View(viewModel);

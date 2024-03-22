@@ -5,12 +5,12 @@ using WebApplication5.Services;
 public class StudentService : IStudentService
 {
     private readonly IStudentRepository _studentRepository;
-    private readonly ICourseRepository _courseRepository;
+    private readonly ICourseEnrollmentRepository _courseEnrollmentRepository;
 
-    public StudentService(IStudentRepository studentRepository, ICourseRepository courseRepository)
+    public StudentService(IStudentRepository studentRepository, ICourseEnrollmentRepository courseRepository)
     {
         _studentRepository = studentRepository;
-        _courseRepository = courseRepository;
+        _courseEnrollmentRepository = courseRepository;
     }
 
     public async Task<IEnumerable<Student>> GetAllStudentsAsync()
@@ -99,37 +99,37 @@ public class StudentService : IStudentService
 
     public async Task UpdateCourseEnrollmentAsync(CourseEnrollment courseEnrollment)
     {
-        await _courseRepository.UpdateCourseEnrollmentAsync(courseEnrollment);
+        await _courseEnrollmentRepository.UpdateCourseEnrollmentAsync(courseEnrollment);
     }
 
     public async Task<List<Course>> GetAllCoursesAsync()
     {
-        return await _courseRepository.GetAllCoursesAsync();
+        return await _courseEnrollmentRepository.GetAllStudentCoursesAsync();
     }
 
     public async Task<List<Enrollment>> GetAllEnrollmentsAsync()
     {
-        return await _courseRepository.GetAllEnrollmentsAsync();
+        return await _courseEnrollmentRepository.GetAllStudentEnrollmentsAsync();
     }
 
     public async Task DeleteCourseEnrollmentAsync(int courseId, int studentId)
     {
-        await _courseRepository.DeleteCourseEnrollmentAsync(courseId, studentId);
+        await _courseEnrollmentRepository.DeleteCourseEnrollmentAsync(courseId, studentId);
     }
 
-    public async Task<CourseEnrollment> GetCourseEnrollmentByStudentAsync(int studentId, int courseId)
+    public async Task<CourseEnrollment> GetCourseEnrollmentFromStudentAsync(int studentId, int courseId)
     {
-        return await _courseRepository.GetCourseEnrollmentByStudentAsync(studentId, courseId);
+        return await _courseEnrollmentRepository.GetCourseEnrollmentFromStudentAsync(studentId, courseId);
     }
 
-    public async Task AddCourseEnrollmentAsync(int studentId, CourseEnrollment courseEnrollment)
+    public async Task AddCourseEnrollmentToStudentAsync(int studentId, CourseEnrollment courseEnrollment)
     {
-        await _courseRepository.AddCourseEnrollmentAsync(studentId, courseEnrollment);
+        await _courseEnrollmentRepository.AddCourseEnrollmentToStudentAsync(studentId, courseEnrollment);
     }
 
-    public async Task AssignCourseToStudentAsync(CourseEnrollment courseEnrollment)
+    public async Task AssignCourseEnrollmentToStudentAsync(CourseEnrollment courseEnrollment)
     {
-        await _courseRepository.AssignCourseToStudentAsync(courseEnrollment);
+        await _courseEnrollmentRepository.AssignCourseEnrollmentToStudentAsync(courseEnrollment);
     }
 
 }

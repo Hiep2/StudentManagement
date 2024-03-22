@@ -15,7 +15,7 @@ namespace WebApplication5.Controllers
 
         public async Task<ActionResult> EditAsync(int studentId, int courseId)
         {
-            var courseEnrollment = await studentService.GetCourseEnrollmentByStudentAsync(studentId, courseId);
+            var courseEnrollment = await studentService.GetCourseEnrollmentFromStudentAsync(studentId, courseId);
 
             if (courseEnrollment == null)
             {
@@ -51,7 +51,7 @@ namespace WebApplication5.Controllers
 
                 if (courseEnrollment.CourseId == 0)
                 {
-                    await studentService.AddCourseEnrollmentAsync(studentId, courseEnrollment);
+                    await studentService.AddCourseEnrollmentToStudentAsync(studentId, courseEnrollment);
                 }
                 else
                 {
@@ -72,7 +72,7 @@ namespace WebApplication5.Controllers
         [HttpPost]
         public async Task<ActionResult> AssignCourseAsync(CourseEnrollment courseEnrollment)
         {
-            await studentService.AssignCourseToStudentAsync(courseEnrollment);
+            await studentService.AssignCourseEnrollmentToStudentAsync(courseEnrollment);
             return RedirectToAction(ViewNames.Index);
         }
     }

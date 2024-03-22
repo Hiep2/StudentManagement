@@ -8,7 +8,5 @@
         public virtual DateTime BirthDate { get; set; }
         public virtual string? ClassName { get; set; }
         public virtual int StudyYear { get; set; }
-        //public virtual List<Enrollment> Enrollments { get; set; }
-
     }
 }

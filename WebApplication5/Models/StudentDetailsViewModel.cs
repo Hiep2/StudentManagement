@@ -3,6 +3,6 @@
     public class StudentDetailsViewModel
     {
         public required Student Student { get; set; }
-        public List<CourseEnrollment> Courses { get; set; } = new List<CourseEnrollment>();
+        public List<CourseEnrollment> _CoursesEnrollments { get; set; } = new List<CourseEnrollment>();
     }
 }

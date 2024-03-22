@@ -13,5 +13,23 @@ namespace WebApplication5.Models
 
         public double finalGrade => (ProzessGrade + ComponentGrade) / 2.0;
         public bool isPassed => finalGrade >= 4.0;
+
+        public Enrollment(int courseId, int studentId, double prozessGrade, double componentGrade)
+        {
+            CourseId = courseId;
+            StudentId = studentId;
+            ProzessGrade = prozessGrade;
+            ComponentGrade = componentGrade;
+        }
+
+        internal void SetComponentGrade(double componentGrade)
+        {
+            ComponentGrade = componentGrade;
+        }
+
+        internal void SetProzessGrade(double prozessGrade)
+        {
+            ProzessGrade = prozessGrade;
+        }
     }
 }

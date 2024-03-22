@@ -12,7 +12,7 @@ builder.Services.AddDbContext<SchoolContext>(options =>
         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))));
 
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
-builder.Services.AddScoped<ICourseRepository, CourseRepository>();
+builder.Services.AddScoped<ICourseEnrollmentRepository, CourseEnrollmentRepository>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 var app = builder.Build();
 

@@ -66,14 +66,7 @@ namespace WebApplication5.Repositories
         {
             var courseEnrollments = await _context.Enrollments
                 .Where(e => e.StudentId == studentId)
-                .Select(e => new CourseEnrollment
-                {
-                    CourseId = e.Course.CourseId,
-                CourseName = e.Course.CourseName,
-                CourseUnit = e.Course.CourseUnit,
-                ProzessGrade = e.ProzessGrade,
-                ComponentGrade = e.ComponentGrade,
-                })
+                .Select(e => new CourseEnrollment(e.Course.CourseId, e.Course.CourseName, e.Course.CourseUnit, e.ProzessGrade, e.ComponentGrade, 0))
                 .ToListAsync();
 
             return courseEnrollments;
